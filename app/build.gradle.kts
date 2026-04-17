@@ -40,6 +40,11 @@ dependencies {
     implementation(libs.material)
     implementation(libs.activity)
     implementation(libs.constraintlayout)
+    implementation(fileTree(mapOf(
+        "dir" to "D:\\Androidcode\\Notes_master\\httpcomponents-client-4.5.14-bin\\lib",
+        "include" to listOf("*.aar", "*.jar"),
+        "exclude" to listOf("")
+    )))
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
