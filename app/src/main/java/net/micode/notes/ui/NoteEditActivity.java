@@ -259,25 +259,38 @@ public class NoteEditActivity extends Activity implements OnClickListener,
                     WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN
                             | WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
         } else if(TextUtils.equals(Intent.ACTION_INSERT_OR_EDIT, intent.getAction())) {
-            // New note
+            /**
+             * 创建新便签的逻辑
+             * 1. 从Intent中获取必要参数
+             * 2. 检查是否为通话记录便签
+             * 3. 创建空便签或转换为通话便签
+             */
+            // 获取文件夹ID
             long folderId = intent.getLongExtra(Notes.INTENT_EXTRA_FOLDER_ID, 0);
+            // 获取Widget相关参数
             int widgetId = intent.getIntExtra(Notes.INTENT_EXTRA_WIDGET_ID,
                     AppWidgetManager.INVALID_APPWIDGET_ID);
             int widgetType = intent.getIntExtra(Notes.INTENT_EXTRA_WIDGET_TYPE,
                     Notes.TYPE_WIDGET_INVALIDE);
+            // 获取背景颜色ID，默认为系统默认颜色
             int bgResId = intent.getIntExtra(Notes.INTENT_EXTRA_BACKGROUND_ID,
                     ResourceParser.getDefaultBgId(this));
 
-            // Parse call-record note
+            /**
+             * 处理通话记录便签
+             * 如果有电话号码和通话日期，则创建通话记录便签
+             */
             String phoneNumber = intent.getStringExtra(Intent.EXTRA_PHONE_NUMBER);
             long callDate = intent.getLongExtra(Notes.INTENT_EXTRA_CALL_DATE, 0);
             if (callDate != 0 && phoneNumber != null) {
                 if (TextUtils.isEmpty(phoneNumber)) {
                     Log.w(TAG, "The call record number is null");
                 }
+                // 检查是否已存在相同的通话记录便签
                 long noteId = 0;
                 if ((noteId = DataUtils.getNoteIdByPhoneNumberAndCallDate(getContentResolver(),
                         phoneNumber, callDate)) > 0) {
+                    // 已存在，则加载现有便签
                     mWorkingNote = WorkingNote.load(this, noteId);
                     if (mWorkingNote == null) {
                         Log.e(TAG, "load call note failed with note id" + noteId);
@@ -285,11 +298,13 @@ public class NoteEditActivity extends Activity implements OnClickListener,
                         return false;
                     }
                 } else {
+                    // 不存在，则创建新的通话记录便签
                     mWorkingNote = WorkingNote.createEmptyNote(this, folderId, widgetId,
                             widgetType, bgResId);
                     mWorkingNote.convertToCallNote(phoneNumber, callDate);
                 }
             } else {
+                // 创建普通空便签
                 mWorkingNote = WorkingNote.createEmptyNote(this, folderId, widgetId, widgetType,
                         bgResId);
             }
@@ -850,16 +865,28 @@ public class NoteEditActivity extends Activity implements OnClickListener,
         return hasChecked;
     }
 
+    /**
+     * 保存便签
+     * 1. 首先获取当前编辑的文本内容
+     * 2. 调用WorkingNote的saveNote方法将便签保存到数据库
+     * 3. 如果保存成功，设置返回结果为RESULT_OK
+     * 4. 返回保存是否成功的结果
+     * 
+     * @return 是否保存成功
+     */
     private boolean saveNote() {
+        // 获取当前编辑的文本内容（包括普通模式和清单模式）
         getWorkingText();
+        // 调用WorkingNote的saveNote方法将便签保存到数据库
         boolean saved = mWorkingNote.saveNote();
         if (saved) {
             /**
-             * There are two modes from List view to edit view, open one note,
-             * create/edit a node. Opening node requires to the original
-             * position in the list when back from edit view, while creating a
-             * new node requires to the top of the list. This code
-             * {@link #RESULT_OK} is used to identify the create/edit state
+             * 从列表视图到编辑视图有两种模式：
+             * 1. 打开现有便签
+             * 2. 创建/编辑便签
+             * 打开便签时，返回列表视图需要保持原位置
+             * 创建新便签时，返回列表视图需要显示在顶部
+             * 使用RESULT_OK来标识创建/编辑状态
              */
             setResult(RESULT_OK);
         }

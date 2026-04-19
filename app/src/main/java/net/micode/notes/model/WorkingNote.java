@@ -174,12 +174,31 @@ public class WorkingNote {
         }
     }
 
+    /**
+     * 创建空便签
+     * 1. 实例化WorkingNote对象
+     * 2. 设置背景颜色ID
+     * 3. 设置Widget相关参数
+     * 4. 返回创建的空便签
+     * 
+     * @param context 上下文
+     * @param folderId 文件夹ID
+     * @param widgetId Widget ID
+     * @param widgetType Widget类型
+     * @param defaultBgColorId 默认背景颜色ID
+     * @return 创建的空便签
+     */
     public static WorkingNote createEmptyNote(Context context, long folderId, int widgetId,
             int widgetType, int defaultBgColorId) {
+        // 实例化WorkingNote对象
         WorkingNote note = new WorkingNote(context, folderId);
+        // 设置背景颜色ID
         note.setBgColorId(defaultBgColorId);
+        // 设置Widget ID
         note.setWidgetId(widgetId);
+        // 设置Widget类型
         note.setWidgetType(widgetType);
+        // 返回创建的空便签
         return note;
     }
 

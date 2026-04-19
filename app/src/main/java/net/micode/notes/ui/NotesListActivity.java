@@ -484,7 +484,11 @@ public class NotesListActivity extends Activity implements OnClickListener, OnIt
         });
         builder.show();
     }
-
+    
+    /**
+     * 创建新标签的入口
+     * 启动NoteEditActivity，创建新标签并设置当前文件夹ID
+     */
     private void createNewNote() {
         Intent intent = new Intent(this, NoteEditActivity.class);
         intent.setAction(Intent.ACTION_INSERT_OR_EDIT);
