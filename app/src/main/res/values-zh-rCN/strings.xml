@@ -122,5 +122,6 @@
     <plurals name="search_results_title">
         <item quantity="other"><xliff:g id="NUMBER">%1$s</xliff:g> 条符合“<xliff:g id="SEARCH">%2$s</xliff:g>”的搜索结果</item>
     </plurals>
-
+    <string name="menu_secret">私密模式</string>
+    <string name="menu_quit_secret">退出私密模式</string>
 </resources>

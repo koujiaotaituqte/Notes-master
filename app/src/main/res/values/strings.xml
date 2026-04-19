@@ -131,5 +131,6 @@
         <!-- Case of 0 or 2 or more results. -->
         <item quantity="other"><xliff:g id="number" example="15">%1$s</xliff:g> results for \"<xliff:g id="search" example="???">%2$s</xliff:g>\"</item>
     </plurals>
-
+    <string name="menu_secret">secret model</string>
+    <string name="menu_quit_secret">quit secret model</string>
 </resources>

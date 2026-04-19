@@ -80,7 +80,7 @@ import java.util.HashSet;
 
 public class NotesListActivity extends Activity implements OnClickListener, OnItemLongClickListener {
     private static final int FOLDER_NOTE_LIST_QUERY_TOKEN = 0;
-
+    public static int secret_mode=0;//1 is 隐私
     private static final int FOLDER_LIST_QUERY_TOKEN      = 1;
 
     private static final int MENU_FOLDER_DELETE = 0;
@@ -409,10 +409,35 @@ public class NotesListActivity extends Activity implements OnClickListener, OnIt
     private void startAsyncNotesListQuery() {
         String selection = (mCurrentFolderId == Notes.ID_ROOT_FOLDER) ? ROOT_FOLDER_SELECTION
                 : NORMAL_SELECTION;
-        mBackgroundQueryHandler.startQuery(FOLDER_NOTE_LIST_QUERY_TOKEN, null,
-                Notes.CONTENT_NOTE_URI, NoteItemData.PROJECTION, selection, new String[] {
-                    String.valueOf(mCurrentFolderId)
-                }, NoteColumns.TYPE + " DESC," + NoteColumns.MODIFIED_DATE + " DESC");
+        if(secret_mode == 0) {
+            mBackgroundQueryHandler.startQuery(FOLDER_NOTE_LIST_QUERY_TOKEN, null,
+                    Notes.CONTENT_NOTE_URI, NoteItemData.PROJECTION, selection, new String[]{
+                            String.valueOf(mCurrentFolderId)
+                    }, NoteColumns.TYPE + " DESC," + NoteColumns.MODIFIED_DATE + " DESC");
+        }
+        else{
+            String str1="'～(∠・ω )⌒☆'";
+            String [] PROJECTION=new String[]{//定义一个新的PROJECTION数组,只换
+                    NoteColumns.ID,
+                    NoteColumns.ALERTED_DATE,
+                    NoteColumns.BG_COLOR_ID,
+                    NoteColumns.CREATED_DATE,
+                    NoteColumns.HAS_ATTACHMENT,
+                    NoteColumns.MODIFIED_DATE,
+                    NoteColumns.NOTES_COUNT,
+                    NoteColumns.PARENT_ID,
+                    //NoteColumns.SNIPPET,
+                    str1,
+                    NoteColumns.TYPE,
+                    NoteColumns.WIDGET_ID,
+                    NoteColumns.WIDGET_TYPE,
+            };
+            mBackgroundQueryHandler.startQuery(FOLDER_NOTE_LIST_QUERY_TOKEN, null,
+                    Notes.CONTENT_NOTE_URI, PROJECTION, selection, new String[]{
+                            String.valueOf(mCurrentFolderId)
+                    }, NoteColumns.TYPE + " DESC," + NoteColumns.MODIFIED_DATE + " DESC");
+
+        }
     }
 
     private final class BackgroundQueryHandler extends AsyncQueryHandler {
@@ -770,6 +795,10 @@ public class NotesListActivity extends Activity implements OnClickListener, OnIt
         } else {
             Log.e(TAG, "Wrong state:" + mState);
         }
+        if(secret_mode==1)
+            menu.findItem(R.id.menu_secret).setVisible(false);
+        else
+            menu.findItem(R.id.menu_quit_secret).setVisible(false);
         return true;
     }
 
@@ -802,6 +831,57 @@ public class NotesListActivity extends Activity implements OnClickListener, OnIt
         }
         else if (id == R.id.menu_search) {
             onSearchRequested();
+        }
+        else if(id == R.id.menu_secret){
+            secret_mode = 1;
+            AlertDialog.Builder dialog = new AlertDialog.Builder(NotesListActivity.this);
+            dialog.setTitle("重要提醒");
+            dialog.setMessage("您确认进入私密模式吗?");
+            dialog.setCancelable(false);
+            dialog.setPositiveButton("确认", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    startAsyncNotesListQuery();
+                    // 刷新菜单
+                    //invalidateOptionsMenu();
+                    Toast.makeText(NotesListActivity.this, "您已进入私密模式", Toast.LENGTH_SHORT).show();
+                }
+            });
+            dialog.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    //secret_mode = 0; // 取消恢复
+                }
+            });
+            dialog.show();
+            startAsyncNotesListQuery();
+            Toast.makeText(NotesListActivity.this, "您已进入私密模式", Toast.LENGTH_SHORT).show();
+            return true;
+        }
+        else if(id == R.id.menu_quit_secret){
+// 图9：退出私密模式
+            secret_mode = 0;
+            AlertDialog.Builder dialog = new AlertDialog.Builder(NotesListActivity.this);
+            dialog.setTitle("重要提醒");
+            dialog.setMessage("您确认退出私密模式吗?");
+            dialog.setCancelable(false);
+            dialog.setPositiveButton("确认", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    startAsyncNotesListQuery();
+                    // 刷新菜单
+                   // invalidateOptionsMenu();
+                    Toast.makeText(NotesListActivity.this, "您已退出私密模式", Toast.LENGTH_SHORT).show();
+                }
+            });
+            dialog.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    //secret_mode = 1; // 取消恢复
+                }
+            });
+            dialog.show();
+            return true;
         }
 
         return true;
