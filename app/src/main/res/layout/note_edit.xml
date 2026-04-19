@@ -31,15 +31,6 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content">
 
-            <TextView
-                android:id="@+id/tv_modified_date"
-                android:layout_width="0dip"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:layout_gravity="left|center_vertical"
-                android:layout_marginRight="8dip"
-                android:textAppearance="@style/TextAppearanceSecondaryItem" />
-
             <ImageView
                 android:id="@+id/iv_alert_icon"
                 android:layout_width="wrap_content"
@@ -106,6 +97,15 @@
                         android:orientation="vertical"
                         android:layout_marginLeft="-10dip"
                         android:visibility="gone" />
+
+                    <TextView
+                        android:id="@+id/tv_modified_date"
+                        android:layout_width="0dip"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="left|center_vertical"
+                        android:layout_marginRight="8dip"
+                        android:layout_weight="1"
+                        android:textAppearance="@style/TextAppearanceSecondaryItem" />
                 </LinearLayout>
             </ScrollView>
 
@@ -397,4 +397,12 @@
                 android:src="@drawable/selected" />
         </FrameLayout>
     </LinearLayout>
+    <ImageButton
+        android:id="@+id/add_img_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="7dp"
+        android:layout_marginBottom="20dp"
+        android:layout_gravity="bottom|center"
+        android:src="@android:drawable/ic_menu_gallery" />
 </FrameLayout>
